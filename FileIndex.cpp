@@ -1,11 +1,11 @@
 #include "FileIndex.h"
 #include "FileScanner.h"
+#include <algorithm>
+#include <filesystem>
 #include <fstream>
 #include <string>
-#include <vector>
-#include <algorithm>
 #include <unordered_map>
-#include <filesystem>
+#include <vector>
 
 bool isAsciiLetterOrDigit(char ch)
 {
@@ -81,38 +81,31 @@ std::vector<RankedFileResult> searchIndex(const FileIndex &index, const std::str
 {
     std::vector<RankedFileResult> results;
 
-    const std::vector<std::string> queryWords = tokenizeLine(query);
+    std::vector<std::string> words = tokenizeLine(query);
 
-    if (queryWords.size() != 1)
-    {
+    if (words.size() != 1)
         return results;
-    }
 
-    const std::string &word = queryWords[0];
-
-    const auto it = index.words.find(word);
+    auto it = index.words.find(words[0]);
 
     if (it == index.words.end())
-    {
         return results;
-    }
 
     std::unordered_map<std::string, int> matchCounts;
 
-    for (const IndexedOccurrence &occurrence : it->second)
+    for (const IndexedOccurrence &occurence : it->second)
     {
-        ++matchCounts[occurrence.path.string()];
+        ++matchCounts[occurence.path.string()];
     }
 
     for (const auto &[pathText, count] : matchCounts)
     {
-        results.push_back(RankedFileResult{std::filesystem::path(pathText), count});
+        results.push_back(RankedFileResult{pathText, count});
     }
 
     std::sort(results.begin(), results.end(),
               [](const RankedFileResult &left, const RankedFileResult &right) {
                   return left.matchCount > right.matchCount;
               });
-
     return results;
 }
