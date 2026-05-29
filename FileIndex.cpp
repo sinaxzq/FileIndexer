@@ -3,6 +3,9 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <unordered_map>
+#include <filesystem>
 
 bool isAsciiLetterOrDigit(char ch)
 {
@@ -72,4 +75,44 @@ FileIndex buildIndex(const std::vector<FileEntry> &files)
     }
 
     return index;
+}
+
+std::vector<RankedFileResult> searchIndex(const FileIndex &index, const std::string &query)
+{
+    std::vector<RankedFileResult> results;
+
+    const std::vector<std::string> queryWords = tokenizeLine(query);
+
+    if (queryWords.size() != 1)
+    {
+        return results;
+    }
+
+    const std::string &word = queryWords[0];
+
+    const auto it = index.words.find(word);
+
+    if (it == index.words.end())
+    {
+        return results;
+    }
+
+    std::unordered_map<std::string, int> matchCounts;
+
+    for (const IndexedOccurrence &occurrence : it->second)
+    {
+        ++matchCounts[occurrence.path.string()];
+    }
+
+    for (const auto &[pathText, count] : matchCounts)
+    {
+        results.push_back(RankedFileResult{std::filesystem::path(pathText), count});
+    }
+
+    std::sort(results.begin(), results.end(),
+              [](const RankedFileResult &left, const RankedFileResult &right) {
+                  return left.matchCount > right.matchCount;
+              });
+
+    return results;
 }

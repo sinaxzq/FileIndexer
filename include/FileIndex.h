@@ -19,3 +19,11 @@ struct FileIndex
 std::vector<std::string> tokenizeLine(const std::string &line);
 
 FileIndex buildIndex(const std::vector<FileEntry> &files);
+
+struct RankedFileResult
+{
+    std::filesystem::path path;
+    int matchCount{};
+};
+
+std::vector<RankedFileResult> searchIndex(const FileIndex &index, const std::string &query);
