@@ -17,6 +17,7 @@ endfunction()
 add_library(FileIndexerCore
     FileScanner.cpp
     FileSearch.cpp
+    FileIndex.cpp
 )
 
 target_include_directories(FileIndexerCore PUBLIC
@@ -55,7 +56,18 @@ target_link_libraries(FileSearchTests PRIVATE
 
 enable_strict_warnings(FileSearchTests)
 
+add_executable(FileIndexTests
+    FileIndexTests.cpp
+)
+
+target_link_libraries(FileIndexTests PRIVATE
+    FileIndexerCore
+)
+
+enable_strict_warnings(FileIndexTests)
+
 enable_testing()
 
 add_test(NAME FileIndexerTests COMMAND FileIndexerTests)
 add_test(NAME FileSearchTests COMMAND FileSearchTests)
+add_test(NAME FileIndexTests COMMAND FileIndexTests)
