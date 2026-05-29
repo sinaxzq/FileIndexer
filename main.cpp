@@ -1,3 +1,4 @@
+#include "FileIndex.h"
 #include "FileScanner.h"
 #include "FileSearch.h"
 
@@ -11,6 +12,7 @@ void printUsage()
     std::cout << "Usage:\n";
     std::cout << "  FileIndexerApp scan <folder_path>\n";
     std::cout << "  FileIndexerApp search <folder_path> <query>\n";
+    std::cout << "  FileIndexerApp index-search <folder_path> <query>\n";
 }
 
 void printFiles(const std::vector<FileEntry> &files)
@@ -31,6 +33,16 @@ void printSearchResults(const std::vector<SearchResult> &results)
     {
         std::cout << result.path.string() << ":" << result.lineNumber << " | " << result.lineText
                   << "\n";
+    }
+}
+
+void printRankedResults(const std::vector<RankedFileResult> &results)
+{
+    std::cout << "Ranked files: " << results.size() << "\n";
+
+    for (const RankedFileResult &result : results)
+    {
+        std::cout << result.path.string() << " | matches: " << result.matchCount << "\n";
     }
 }
 } // namespace
@@ -67,6 +79,24 @@ int main(int argc, char *argv[])
         const std::vector<SearchResult> results = searchFilesForText(files, query);
 
         printSearchResults(results);
+        return 0;
+    }
+
+    if (command == "index-search")
+    {
+        if (argc < 4)
+        {
+            return 1;
+        }
+
+        std::vector<FileEntry> files = scanFiles(root);
+
+        FileIndex index = buildIndex(files);
+
+        std::vector<RankedFileResult> results = searchIndex(index, argv[3]);
+
+        printRankedResults(results);
+
         return 0;
     }
 
