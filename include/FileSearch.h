@@ -13,5 +13,5 @@ struct SearchResult
     std::string lineText;
 };
 
-std::vector<SearchResult> searchFilesForText(const std::vector<FileEntry>& files ,
-                                             const std::string& query);
+std::vector<SearchResult> searchFilesForText(const std::vector<FileEntry> &files,
+                                             const std::string &query);

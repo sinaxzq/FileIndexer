@@ -4,15 +4,15 @@
 
 namespace
 {
-    bool shouldSkipDirectory(const std::filesystem::path& path)
-    {
-        const std::string name = path.filename().string();
+bool shouldSkipDirectory(const std::filesystem::path &path)
+{
+    const std::string name = path.filename().string();
 
-        return name == ".git" || name == ".vs" || name == "build" || name == "out";
-    }
+    return name == ".git" || name == ".vs" || name == "build" || name == "out";
 }
+} // namespace
 
-std::vector<FileEntry> scanFiles(const std::filesystem::path& root)
+std::vector<FileEntry> scanFiles(const std::filesystem::path &root)
 {
     std::vector<FileEntry> files;
 
@@ -31,7 +31,7 @@ std::vector<FileEntry> scanFiles(const std::filesystem::path& root)
 
     while (iterator != end)
     {
-        const std::filesystem::directory_entry& entry = *iterator;
+        const std::filesystem::directory_entry &entry = *iterator;
 
         if (entry.is_directory() && shouldSkipDirectory(entry.path()))
         {
@@ -42,7 +42,7 @@ std::vector<FileEntry> scanFiles(const std::filesystem::path& root)
 
         if (entry.is_regular_file())
         {
-            files.push_back(FileEntry{ entry.path(), entry.file_size() });
+            files.push_back(FileEntry{entry.path(), entry.file_size()});
         }
 
         ++iterator;

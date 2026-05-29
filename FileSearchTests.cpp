@@ -21,7 +21,7 @@ void testSearchFindsMatchingLine()
     }
 
     const std::vector<FileEntry> files = scanFiles(testDirectory);
-    const std::vector<SearchResult> results = searchFilesForText(files , "C++");
+    const std::vector<SearchResult> results = searchFilesForText(files, "C++");
 
     assert(results.size() == 1);
     assert(results[0].path.filename() == "notes.txt");
@@ -45,7 +45,7 @@ void testSearchWithMissingQueryReturnsEmpty()
     }
 
     const std::vector<FileEntry> files = scanFiles(testDirectory);
-    const std::vector<SearchResult> results = searchFilesForText(files , "missing");
+    const std::vector<SearchResult> results = searchFilesForText(files, "missing");
 
     assert(results.empty());
 
@@ -66,7 +66,7 @@ void testSearchWithEmptyQueryReturnsEmpty()
     }
 
     const std::vector<FileEntry> files = scanFiles(testDirectory);
-    const std::vector<SearchResult> results = searchFilesForText(files , "");
+    const std::vector<SearchResult> results = searchFilesForText(files, "");
 
     assert(results.empty());
 

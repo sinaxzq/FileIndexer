@@ -6,36 +6,36 @@
 
 namespace
 {
-    void printUsage()
+void printUsage()
+{
+    std::cout << "Usage:\n";
+    std::cout << "  FileIndexerApp scan <folder_path>\n";
+    std::cout << "  FileIndexerApp search <folder_path> <query>\n";
+}
+
+void printFiles(const std::vector<FileEntry> &files)
+{
+    std::cout << "Files found: " << files.size() << "\n";
+
+    for (const FileEntry &file : files)
     {
-        std::cout << "Usage:\n";
-        std::cout << "  FileIndexerApp scan <folder_path>\n";
-        std::cout << "  FileIndexerApp search <folder_path> <query>\n";
-    }
-
-    void printFiles(const std::vector<FileEntry>& files)
-    {
-        std::cout << "Files found: " << files.size() << "\n";
-
-        for (const FileEntry& file : files)
-        {
-            std::cout << file.path.string() << " | " << file.sizeBytes << " bytes\n";
-        }
-    }
-
-    void printSearchResults(const std::vector<SearchResult>& results)
-    {
-        std::cout << "Matches found: " << results.size() << "\n";
-
-        for (const SearchResult& result : results)
-        {
-            std::cout << result.path.string() << ":" << result.lineNumber << " | "
-                << result.lineText << "\n";
-        }
+        std::cout << file.path.string() << " | " << file.sizeBytes << " bytes\n";
     }
 }
 
-int main(int argc , char* argv[])
+void printSearchResults(const std::vector<SearchResult> &results)
+{
+    std::cout << "Matches found: " << results.size() << "\n";
+
+    for (const SearchResult &result : results)
+    {
+        std::cout << result.path.string() << ":" << result.lineNumber << " | " << result.lineText
+                  << "\n";
+    }
+}
+} // namespace
+
+int main(int argc, char *argv[])
 {
     if (argc < 3)
     {
@@ -64,7 +64,7 @@ int main(int argc , char* argv[])
         const std::string query = argv[3];
 
         const std::vector<FileEntry> files = scanFiles(root);
-        const std::vector<SearchResult> results = searchFilesForText(files , query);
+        const std::vector<SearchResult> results = searchFilesForText(files, query);
 
         printSearchResults(results);
         return 0;

@@ -10,4 +10,4 @@ struct FileEntry
     std::uintmax_t sizeBytes{};
 };
 
-std::vector<FileEntry> scanFiles(const std::filesystem::path& root);
+std::vector<FileEntry> scanFiles(const std::filesystem::path &root);
