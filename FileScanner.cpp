@@ -1,6 +1,8 @@
 #include "FileScanner.h"
+
 #include <filesystem>
 #include <vector>
+#include <string>
 
 std::vector<FileEntry> scanFiles(const std::filesystem::path& root)
 {
@@ -31,3 +33,4 @@ std::vector<FileEntry> scanFiles(const std::filesystem::path& root)
 
     return files;
 }
+
