@@ -26,4 +26,12 @@ struct RankedFileResult
     int matchCount{};
 };
 
+struct WordFrequency
+{
+    std::string word;
+    int count{};
+};
+
 std::vector<RankedFileResult> searchIndex(const FileIndex &index, const std::string &query);
+
+std::vector<WordFrequency> getTopWords(const FileIndex &index, int limit);

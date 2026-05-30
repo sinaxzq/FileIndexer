@@ -88,7 +88,7 @@ std::vector<RankedFileResult> searchIndex(const FileIndex &index, const std::str
 
     std::unordered_map<std::string, int> matchCounts;
 
-    for (auto &word : words)
+    for (const auto &word : words)
     {
         const auto it = index.words.find(word);
 
@@ -112,4 +112,29 @@ std::vector<RankedFileResult> searchIndex(const FileIndex &index, const std::str
               });
 
     return results;
+}
+
+std::vector<WordFrequency> getTopWords(const FileIndex &index, int limit)
+{
+    std::vector<WordFrequency> frequencies;
+
+    if (limit <= 0)
+        return frequencies;
+
+    for (const auto &[word, occurrences] : index.words)
+    {
+        frequencies.push_back(WordFrequency{word, static_cast<int>(occurrences.size())});
+    }
+
+    std::sort(frequencies.begin(), frequencies.end(),
+              [](const WordFrequency &left, const WordFrequency &right) {
+                  return left.count > right.count;
+              });
+
+    if (frequencies.size() > static_cast<std::size_t>(limit))
+    {
+        frequencies.resize(static_cast<std::size_t>(limit));
+    }
+
+    return frequencies;
 }
