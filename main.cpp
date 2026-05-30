@@ -13,6 +13,7 @@ void printUsage()
     std::cout << "  FileIndexerApp scan <folder_path>\n";
     std::cout << "  FileIndexerApp search <folder_path> <query>\n";
     std::cout << "  FileIndexerApp index-search <folder_path> <query>\n";
+    std::cout << "  FileIndexerApp top-words <folder_path> <limit>\n";
 }
 
 void printFiles(const std::vector<FileEntry> &files)
@@ -43,6 +44,15 @@ void printRankedResults(const std::vector<RankedFileResult> &results)
     for (const RankedFileResult &result : results)
     {
         std::cout << result.path.string() << " | matches: " << result.matchCount << "\n";
+    }
+}
+void printWordFrequencies(const std::vector<WordFrequency> &words)
+{
+    std::cout << words.size() << " most frequent words:" << "\n";
+
+    for (const WordFrequency &word : words)
+    {
+        std::cout << word.word << " | " << word.count << "\n";
     }
 }
 } // namespace
@@ -96,6 +106,35 @@ int main(int argc, char *argv[])
         std::vector<RankedFileResult> results = searchIndex(index, argv[3]);
 
         printRankedResults(results);
+
+        return 0;
+    }
+
+    if (command == "top-words")
+    {
+        if (argc < 4)
+        {
+            std::cout << "Missing limit\n";
+            return 1;
+        }
+
+        int limit = 0;
+
+        try
+        {
+            limit = std::stoi(argv[3]);
+        }
+        catch (...)
+        {
+            std::cout << "Invalid limit\n";
+            return 1;
+        }
+
+        const std::vector<FileEntry> files = scanFiles(root);
+        const FileIndex index = buildIndex(files);
+        const std::vector<WordFrequency> topWords = getTopWords(index, limit);
+
+        printWordFrequencies(topWords);
 
         return 0;
     }
