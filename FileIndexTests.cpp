@@ -4,6 +4,7 @@
 #include <cassert>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -79,6 +80,46 @@ void testBuildIndexStoresWordOccurrences()
     std::filesystem::remove_all(testDirectory);
 }
 
+void testSearchIndexSupportsMultipleQueryWords()
+{
+    FileIndex index;
+
+    index.words["search"].push_back({"FileA.cpp", 1});
+    index.words["search"].push_back({"FileA.cpp", 3});
+    index.words["search"].push_back({"FileB.cpp", 2});
+
+    index.words["file"].push_back({"FileB.cpp", 4});
+    index.words["file"].push_back({"FileC.cpp", 5});
+
+    const std::vector<RankedFileResult> results = searchIndex(index, "search file");
+
+    assert(results.size() == 3);
+
+    assert(results[0].matchCount == 2);
+    assert(results[1].matchCount == 2);
+    assert(results[2].matchCount == 1);
+}
+
+void testSearchIndexSkipsMissingQueryWords()
+{
+    FileIndex index;
+
+    index.words["search"].push_back({"FileA.cpp", 1});
+    index.words["search"].push_back({"FileA.cpp", 3});
+    index.words["search"].push_back({"FileB.cpp", 2});
+
+    index.words["file"].push_back({"FileB.cpp", 4});
+    index.words["file"].push_back({"FileC.cpp", 5});
+
+    const std::vector<RankedFileResult> results = searchIndex(index, "missing search file");
+
+    assert(results.size() == 3);
+
+    assert(results[0].matchCount == 2);
+    assert(results[1].matchCount == 2);
+    assert(results[2].matchCount == 1);
+}
+
 int main()
 {
     testTokenizeSimpleWords();
@@ -87,6 +128,8 @@ int main()
     testTokenizeKeepsDigits();
     testTokenizeEmptyLine();
     testBuildIndexStoresWordOccurrences();
+    testSearchIndexSupportsMultipleQueryWords();
+    testSearchIndexSkipsMissingQueryWords();
 
     return 0;
 }

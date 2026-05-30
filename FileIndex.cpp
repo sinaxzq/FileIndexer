@@ -83,19 +83,22 @@ std::vector<RankedFileResult> searchIndex(const FileIndex &index, const std::str
 
     std::vector<std::string> words = tokenizeLine(query);
 
-    if (words.size() != 1)
-        return results;
-
-    auto it = index.words.find(words[0]);
-
-    if (it == index.words.end())
+    if (words.empty())
         return results;
 
     std::unordered_map<std::string, int> matchCounts;
 
-    for (const IndexedOccurrence &occurence : it->second)
+    for (auto &word : words)
     {
-        ++matchCounts[occurence.path.string()];
+        const auto it = index.words.find(word);
+
+        if (it == index.words.end())
+            continue;
+
+        for (const IndexedOccurrence &occurence : it->second)
+        {
+            ++matchCounts[occurence.path.string()];
+        }
     }
 
     for (const auto &[pathText, count] : matchCounts)
@@ -107,5 +110,6 @@ std::vector<RankedFileResult> searchIndex(const FileIndex &index, const std::str
               [](const RankedFileResult &left, const RankedFileResult &right) {
                   return left.matchCount > right.matchCount;
               });
+
     return results;
 }
